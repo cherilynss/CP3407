@@ -4,7 +4,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from datetime import date, datetime
-from flask import Flask
+from flask import Flask, render_template
 from sklearn.neighbors import KNeighborsClassifier
 
 app = Flask(__name__)
@@ -78,3 +78,8 @@ def add_attendance(name):
     if int(userid) not in list(df['Roll']):
         with open(f'Attendance/Attendance-{datetoday}.csv', 'a') as f:
             f.write(f'\n{username},{userid},{current_time}')
+
+@app.route('/')
+def home():
+    names, rolls, times, l = extract_attendance()
+    return render_template('home.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
