@@ -27,3 +27,6 @@ if f'Attendance-{datetoday}.csv' not in os.listdir('Attendance'):
     with open(f'Attendance/Attendance-{datetoday}.csv', 'w') as f:
         f.write('Name,Roll,Time')
 
+def totalreg():
+    return len(os.listdir('static/faces'))
+
