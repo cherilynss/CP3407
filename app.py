@@ -30,3 +30,10 @@ if f'Attendance-{datetoday}.csv' not in os.listdir('Attendance'):
 def totalreg():
     return len(os.listdir('static/faces'))
 
+def extract_faces(img):
+    if img != []:
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        face_points = face_detector.detectMultiScale(gray, 1.3, 5)
+        return face_points
+    else:
+        return []
