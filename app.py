@@ -4,7 +4,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from datetime import date, datetime
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from sklearn.neighbors import KNeighborsClassifier
 
 app = Flask(__name__)
@@ -108,3 +108,34 @@ def start():
     names, rolls, times, l = extract_attendance()
     return render_template('home.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
 
+@app.route('/add', methods=['GET', 'POST'])
+def add():
+    newusername = request.form['newusername']
+    newuserid = request.form['newuserid']
+    userimagefolder = 'static/faces/' + newusername + '_' + str(newuserid)
+    if not os.path.isdir(userimagefolder):
+        os.makedirs(userimagefolder)
+    cap = cv2.VideoCapture(0)
+    i, j = 0, 0
+    while 1:
+        _, frame = cap.read()
+        faces = extract_faces(frame)
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 20), 2)
+            cv2.putText(frame, f'Images Captured: {i}/50', (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 20), 2, cv2.LINE_AA)
+            if j % 10 == 0:
+                name = newusername + '_' + str(i) + '.jpg'
+                cv2.imwrite(userimagefolder + '/' + name, frame[y:y+h, x:x+w])
+                i += 1
+            j += 1
+        if j == 500:
+            break
+        cv2.imshow('Adding new User', frame)
+        if cv2.waitKey(1) == 27:
+            break
+    cap.release()
+    cv2.destroyAllWindows()
+    print('Training Model')
+    train_model()
+    names, rolls, times, l = extract_attendance()
+    return render_template('home.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
