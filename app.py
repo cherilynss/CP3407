@@ -3,7 +3,7 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
-from datetime import date
+from datetime import date, datetime
 from flask import Flask
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -69,3 +69,12 @@ def extract_attendance():
     l = len(df)
     return names, rolls, times, l
 
+def add_attendance(name):
+    username = name.split('_')[0]
+    userid = name.split('_')[1]
+    current_time = datetime.now().strftime("%H:%M:%S")
+
+    df = pd.read_csv(f'Attendance/Attendance-{datetoday}.csv')
+    if int(userid) not in list(df['Roll']):
+        with open(f'Attendance/Attendance-{datetoday}.csv', 'a') as f:
+            f.write(f'\n{username},{userid},{current_time}')
