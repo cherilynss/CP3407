@@ -1,5 +1,6 @@
 import cv2
 import os
+import joblib
 from datetime import date
 from flask import Flask
 
@@ -37,3 +38,7 @@ def extract_faces(img):
         return face_points
     else:
         return []
+
+def identify_face(facearray):
+    model = joblib.load('static/face_recognition_model.pkl')
+    return model.predict(facearray)
