@@ -2,6 +2,7 @@ import cv2
 import os
 import joblib
 import numpy as np
+import pandas as pd
 from datetime import date
 from flask import Flask
 from sklearn.neighbors import KNeighborsClassifier
@@ -59,3 +60,12 @@ def train_model():
     knn = KNeighborsClassifier(n_neighbors=5)
     knn.fit(faces, labels)
     joblib.dump(knn, 'static/face_recognition_model.pkl')
+
+def extract_attendance():
+    df = pd.read_csv(f'Attendance/Attendance-{datetoday}.csv')
+    names = df['Name']
+    rolls = df['Roll']
+    times = df['Time']
+    l = len(df)
+    return names, rolls, times, l
+
